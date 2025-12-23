@@ -1,17 +1,14 @@
-# core/settings.py
-
-from pathlib import Path
 import os
+from pathlib import Path
 import dj_database_url
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- SECURITY ---
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-default-key-change-me')
+# --- CORE SETTINGS ---
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-y9k$8w#x@2p!m5n&7q^3r+t*v_w(z1a4b6c8d0e2f4g6h8j0')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# Add your specific Railway domain here
 ALLOWED_HOSTS = [
     'web-production-0ddd6.up.railway.app',
     'localhost',
@@ -19,15 +16,10 @@ ALLOWED_HOSTS = [
     '.railway.app',
 ]
 
-# Required for Django 4.0+ to allow logins/POST requests on Railway
 CSRF_TRUSTED_ORIGINS = [
     'https://web-production-0ddd6.up.railway.app',
     'https://*.railway.app',
 ]
-
-# --- PROXY SETTINGS (Crucial for 502/Redirect issues) ---
-USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # --- APPS & MIDDLEWARE ---
 INSTALLED_APPS = [
@@ -42,7 +34,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Best place for Whitenoise
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -51,8 +43,28 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+ROOT_URLCONF = 'core.urls'
+
+# --- TEMPLATES (FIXES YOUR ERROR) ---
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'shop' / 'templates'], # Or [BASE_DIR / 'templates']
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'core.wsgi.application'
+
 # --- DATABASE ---
-# Automatically uses Railway Postgres if available, else SQLite
 DATABASES = {
     'default': dj_database_url.config(
         default=config('DATABASE_URL', default=f"sqlite:///{BASE_DIR}/db.sqlite3"),
@@ -61,17 +73,26 @@ DATABASES = {
     )
 }
 
-# --- STATIC FILES (WhiteNoise) ---
+# --- STATIC & MEDIA ---
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-# Production-ready storage
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# --- PRODUCTION SECURITY ---
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# --- PROXY & SECURITY ---
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+TIME_ZONE = 'Africa/Nairobi'
+USE_TZ = True
