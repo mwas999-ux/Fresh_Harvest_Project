@@ -36,6 +36,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+ROOT_URLCONF = 'core.urls'
+
 # Find TEMPLATES and update DIRS:
 TEMPLATES = [
     {
