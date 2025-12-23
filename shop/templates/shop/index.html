@@ -1,0 +1,42 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="hero">
+    <h2>Farm-Fresh Produce Delivered to Your Door</h2>
+    <p>Organic fruits, vegetables, and herbs from local farmers</p>
+</section>
+
+<section class="products">
+    <h3>Our Products</h3>
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card" data-product-id="{{ product.id }}">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+            <img src="{% static 'images/placeholder.png' %}" alt="{{ product.name }}">
+            {% endif %}
+            <h4>{{ product.name }}</h4>
+            <p class="category">{{ product.category.name }}</p>
+            <p class="price">KSh {{ product.price }}/{{ product.unit }}</p>
+            <button class="add-to-cart" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}">
+                Add to Cart
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<div id="cart-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Your Cart</h3>
+        <div id="cart-items"></div>
+        <div class="cart-total">
+            <strong>Total: KSh <span id="cart-total">0</span></strong>
+        </div>
+        <a href="{% url 'checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+    </div>
+</div>
+{% endblock %}

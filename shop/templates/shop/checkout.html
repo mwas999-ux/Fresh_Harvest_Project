@@ -1,0 +1,58 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<section class="checkout">
+    <h2>Checkout</h2>
+    <form method="POST" id="checkout-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="address">Delivery Address:</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+        </div>
+        
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <div id="checkout-items"></div>
+            <p class="total">Total: KSh <span id="checkout-total">0</span></p>
+            <input type="hidden" name="total" id="hidden-total">
+        </div>
+        
+        <button type="submit" class="submit-btn">Place Order</button>
+    </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Load cart and display in checkout
+    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+    let total = 0;
+    const itemsDiv = document.getElementById('checkout-items');
+    
+    for (const [id, item] of Object.entries(cart)) {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        itemsDiv.innerHTML += `
+            <div class="checkout-item">
+                <span>${item.name} x ${item.quantity}</span>
+                <span>KSh ${itemTotal.toFixed(2)}</span>
+            </div>
+        `;
+    }
+    
+    document.getElementById('checkout-total').textContent = total.toFixed(2);
+    document.getElementById('hidden-total').value = total.toFixed(2);
+</script>
+{% endblock %}
