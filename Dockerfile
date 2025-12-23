@@ -14,6 +14,5 @@ COPY . .
 RUN mkdir -p staticfiles media
 
 # Combined command: Migrate -> Collect Static -> Run
-CMD python manage.py migrate --noinput && \
-    python manage.py collectstatic --noinput && \
-    gunicorn core.wsgi:application --bind 0.0.0.0:$PORT
+# Use a single string for CMD to ensure environment variables like $PORT are parsed correctly
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT"]
