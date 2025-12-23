@@ -1,0 +1,84 @@
+[phases.setup]
+nixPkgs = ['python39', 'postgresql']
+
+[phases.install]
+cmds = ['pip install -r requirements.txt']
+
+[phases.build]
+cmds = ['python manage.py collectstatic --noinput']
+
+[start]
+cmd = 'python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT'
+```
+
+### Step 6: Update `.gitignore`
+
+Make sure your `.gitignore` includes:
+```
+# Python
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Railway
+.railway/
+```
+
+### Step 7: Verify Your Project Structure
+
+Your project should look like this:
+```
+fresh_harvest_project/
+├── .env                    ← Don't commit this!
+├── .gitignore
+├── Procfile               ← New
+├── railway.json           ← New
+├── nixpacks.toml         ← New
+├── requirements.txt
+├── manage.py
+├── core/
+│   ├── __init__.py
+│   ├── settings.py       ← Updated
+│   ├── urls.py
+│   └── wsgi.py
+├── shop/
+│   ├── migrations/
+│   ├── templates/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── models.py
+│   ├── urls.py
+│   └── views.py
+└── static/
+    ├── css/
+    ├── js/
+    └── images/
